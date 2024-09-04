@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="estilos.css">
+    <title>Formulario</title>
+</head>
+<body>
+    <h1>Formulario de Datos</h1>
+    <form method="POST"> <!--action="/submit"-->
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre"><br><br>
+
+        <label for="apellido">Apellido:</label>
+        <input type="text" id="apellido" name="apellido"><br><br>
+
+        <label for="correo">Correo:</label>
+        <input type="email" id="correo" name="correo"><br><br>
+
+        <input type="submit">
+    </form>
+    <h2>Lista de personas</h2>
+    <table class="table table-striped">
+            <tr>
+                <th width="100px" height="50px">ID</th>
+                <th width="100px" height="50px">Nombre</th>
+                <th width="100px" height="50px">Apellido</th>
+                <th width="100px" height="50px">Correo</th>
+            </tr>
+            {% for usuario in usuarios %}
+            <tr text-align="center">
+                <td width="100px" height="50px" text-align="center">{{usuario.id}}</td>
+                <td width="100px" height="50px" text-align="center">{{usuario.nombre}}</td>
+                <td width="100px" height="50px" text-align="center">{{usuario.apellido}}</td>
+                <td width="100px" height="50px" text-align="center">{{ usuario.correo }}</td>
+            </tr>
+            {% endfor %}
+    </table>
+</body>
+</html>

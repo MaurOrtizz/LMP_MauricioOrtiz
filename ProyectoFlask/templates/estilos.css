@@ -1,0 +1,15 @@
+body {
+    min-height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+table, th, td {
+    padding: 1rem;
+}
+
+th, td {
+    width: 50px;
+    height: 30px;
+}
