@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 import mysql.connector
 import mysql.connector.cursor
 
@@ -20,41 +20,38 @@ else:
 
 @app.route('/', methods=['POST', 'GET'])
 def Index():
-
+    cursor = db.cursor(dictionary=True)
+    
     if request.method == 'POST':
+        id = request.form.get('id')
         nombre = request.form.get('nombre')
         apellido = request.form.get('apellido')
         correo = request.form.get('correo')
         cursor = db.cursor()
-
-        cursor.execute("INSERT INTO usuarios (nombre, apellido, correo) VALUES (%s, %s, %s)", (nombre, apellido, correo))
+        if id:
+            cursor.execute("UPDATE usuarios SET nombre = %s, apellido = %s, correo = %s WHERE id = %s", (nombre, apellido, correo, id))
+            db.commit()
+        else:
+            cursor.execute("INSERT INTO usuarios (nombre, apellido, correo) VALUES (%s, %s, %s)", (nombre, apellido, correo))
+            db.commit()
+        return redirect(url_for('Index'))
+    
+    edit = None
+    if request.args.get('edit'):
+        id = request.args.get('edit')
+        cursor.execute("SELECT * FROM usuarios WHERE id = %s", (id,))
+        edit = cursor.fetchone()
+    
+    if request.args.get('delete'):
+        id = request.args.get('delete')
+        cursor.execute("DELETE FROM usuarios WHERE id = %s", (id,))
         db.commit()
-        cursor.close()
-
-    cursor = db.cursor(dictionary=True)
+    
     cursor.execute("SELECT * FROM usuarios")
     datos = cursor.fetchall()
     cursor.close()
     
-    return render_template('form.html', usuarios = datos)
-
-'''@app.route('/submit', methods=['POST'])
-def submit():
-    nombre = request.form['nombre']
-    apellido = request.form['apellido']
-    correo = request.form['correo']
-
-    cursor = db.cursor()
-    query = "INSERT INTO usuarios (nombre, apellido, correo) VALUES (%s, %s, %s)"
-    values = (nombre, apellido, correo)
-    cursor.execute(query, values)
-    db.commit()
-
-    cursor.close()
-
-    return f"Datos recibidos: Nombre: {nombre}, Apellido: {apellido}, Correo: {correo}"'''
-
-
+    return render_template('form.html', usuarios = datos, edit = edit)
 
 if __name__ == "__main__":
     app.run(debug=True)
